@@ -87,6 +87,4 @@ function success(parsedJSON) {
         type: 'horizontalBar',
         data: parsedJSON
     });
-
-console.log(dataSet)
 }
