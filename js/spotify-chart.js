@@ -114,6 +114,6 @@ function success(parsedJSON) {
       ctx = canvas.getContext('2d')
 
       myBarChart = new Chart(ctx).Bar(
-        dataSet,options
+        dataSet, options
     );
 }
