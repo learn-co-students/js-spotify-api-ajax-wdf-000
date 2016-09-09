@@ -17,19 +17,37 @@ $(function() {
 
 function extractTop10Tracks(tracks) {
   // your code here
+  // return tracks.tracks
+  return tracks
 }
 
 function extractPopularity(tracks) {
   // your code here
+  return tracks.map(function (element) {
+    debugger;
+    return element.popularity;
+  });
 }
 
 function extractNames(tracks) {
   // your code here
+  return tracks.map(function (element) {
+    return element.name;
+  });
 }
 
 function chartData(labels, inputData) {
   // your code here
-
+  var tmp = {}
+  tmp["labels"] = labels;
+  tmp["datasets"] = [];
+  tmp["datasets"].push(dataSetProperties);
+  // tmp["fillColor"] = dataSetProperties.fillColor;
+  // tmp["strokeColor"] = dataSetProperties.strokeColor;
+  // tmp["highlightFill"] = dataSetProperties.highlightFill;
+  // tmp["highlightStroke"] = dataSetProperties.highlightStroke;
+  tmp["datasets"][0]["data"] = inputData;
+  return tmp;
   // use the dataSetProperties variable defined above if it helps
 }
 
@@ -38,6 +56,20 @@ function getSpotifyTracks(callback){
   // parameter it's passed (it's a function), and pass it's 
   // parameter the data it received
 
+  $.ajax({
+    url: url,
+    type: 'GET',
+    // dataType: 'xml/html/script/json',
+    // data: $.param( $('Element or Expression') ),
+    success: function (data, textStatus, jqXHR) {
+      // success callback
+      extractTop10Tracks(data);
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      // error callback
+      console.log("lol error:" + errorThrown);
+    }
+  });
   // use the url variable defined above if it helps
 }
 
