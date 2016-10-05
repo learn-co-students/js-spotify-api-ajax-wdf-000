@@ -10,7 +10,6 @@
 
 (function(){
 
-  "use strict";
 
   //Declare root variable - window in the browser, global on the server
   var root = this,
