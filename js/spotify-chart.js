@@ -85,3 +85,7 @@ function success(parsedJSON) {
   var ctx = $('#spotify-chart').getContext('2d');
   new chart(ctx).bar(data);
 }
+
+$(document).ready(function() {
+  getSpotifyTracks(success);
+});
