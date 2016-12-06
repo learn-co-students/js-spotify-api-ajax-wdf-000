@@ -1,14 +1,16 @@
 var url = "https://api.spotify.com/v1/artists/43ZHCT0cAZBISjO8DG9PnE/top-tracks?country=SE";
 
 var dataSetProperties = {
-  fillColor: 'rgba(220,220,220,0.5)', 
-  strokeColor: 'rgba(220,220,220,0.8)', 
-  highlightFill: 'rgba(220,220,220,0.75)', 
+  fillColor: 'rgba(220,220,220,0.5)',
+  strokeColor: 'rgba(220,220,220,0.8)',
+  highlightFill: 'rgba(220,220,220,0.75)',
   highlightStroke: 'rgba(220,220,220,1)'
 };
 
 $(function() {
   getSpotifyTracks(success);
+  // getspotify function makes an ajax call
+  // its callback function(success) is passed the data
 });
 
 // write functions to pass spec tests here outside the jQuery doc ready
@@ -16,32 +18,80 @@ $(function() {
 // and display the chart correctly in index.html
 
 function extractTop10Tracks(tracks) {
+  return tracks["tracks"].slice(0, 10);
   // your code here
+
 }
 
 function extractPopularity(tracks) {
   // your code here
+  return tracks.map(function(track){
+    return track["popularity"];
+  })
 }
 
 function extractNames(tracks) {
   // your code here
+  return tracks.map(function(track){
+    return track["name"]
+  });
+  // an array with the name property of each track of
+  // the tracks array thats passed to the function
 }
 
 function chartData(labels, inputData) {
   // your code here
 
+  var data = {
+        labels: labels,
+        datasets: [
+            {
+              fillColor: 'rgba(220,220,220,0.5)',
+              strokeColor: 'rgba(220,220,220,0.8)',
+              highlightFill: 'rgba(220,220,220,0.75)',
+              highlightStroke: 'rgba(220,220,220,1)',
+              data: inputData
+            }
+        ]
+    };
+
+  // var ctx = $("canvas#spotify-chart").get(0).getContext("2d");
+  // // reducing jquery object into a dom object
+  // var myBarChart = new Chart(ctx).Bar(data, dataSetProperties);
+
+  return data
+  // also written as var myBarChart = new Chart(ctx, {
+  //       type: 'bar',
+  //       data: data,
+  //       options: options
+  //   });
+
   // use the dataSetProperties variable defined above if it helps
 }
 
 function getSpotifyTracks(callback){
-  // your ajax call here, on success it should call on the 
-  // parameter it's passed (it's a function), and pass it's 
+  // your ajax call here, on success it should call on the
+  // parameter it's passed (it's a function), and pass it's
   // parameter the data it received
 
   // use the url variable defined above if it helps
+    $.ajax({url: url, success: callback})
+    // wanted success to be in the ajax call, not written as $.ajax({url: url}.success, without the success method being called onto it)
+    // ^if its successful it passes the data of the ajax call to the callback function
 }
 
 function success(parsedJSON) {
+  var tracks = extractTop10Tracks(parsedJSON);
+
+  var names = extractNames(tracks);
+  var popularity = extractPopularity(tracks);
+
+  var data = chartData(names, popularity);
+
+  var ctx = $("canvas#spotify-chart").get(0).getContext("2d");
+  // reducing jquery object into a dom object
+  var myBarChart = new Chart(ctx).Bar(data, dataSetProperties);
+
   // this function will make a new bar chart, refer to this url:
   // http://www.chartjs.org/docs/#bar-chart
   // you will need to call on:
