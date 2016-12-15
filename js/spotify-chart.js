@@ -17,23 +17,45 @@ $(function() {
 
 function extractTop10Tracks(tracks) {
   // your code here
+  return tracks.slice(0,10)
 }
 
 function extractPopularity(tracks) {
   // your code here
+  var tracksArr = []
+  for (var i = 0; i < tracks.length; i++){
+    tracksArr.push(tracks[i].popularity);
+  }
+  return tracksArr;
 }
 
 function extractNames(tracks) {
   // your code here
+  var songNames = []
+  for (var i = 0; i < tracks.length; i++){
+    songNames.push(tracks[i].name);
+  }
+  return songNames;
 }
 
 function chartData(labels, inputData) {
   // your code here
-
+  dataSetProperties['data'] = inputData
   // use the dataSetProperties variable defined above if it helps
+ var newObj = {
+    labels: labels,
+    datasets: [dataSetProperties]
+  };
+return newObj
+
 }
 
 function getSpotifyTracks(callback){
+
+$.ajax({url: url, success: callback})
+
+
+
   // your ajax call here, on success it should call on the 
   // parameter it's passed (it's a function), and pass it's 
   // parameter the data it received
@@ -42,6 +64,17 @@ function getSpotifyTracks(callback){
 }
 
 function success(parsedJSON) {
+  var tracks = extractTop10Tracks(parsedJSON);
+
+  var names = extractNames(tracks);
+  var popularity = extractPopularity(tracks);
+
+  var data = chartData(names, popularity);
+
+  var ctx = $("canvas#spotify-chart").get(0).getContext("2d");
+  // reducing jquery object into a dom object
+  var myBarChart = new Chart(ctx).Bar(data, dataSetProperties);
+
   // this function will make a new bar chart, refer to this url:
   // http://www.chartjs.org/docs/#bar-chart
   // you will need to call on:
