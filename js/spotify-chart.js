@@ -17,20 +17,34 @@ $(function() {
 
 function extractTop10Tracks(tracks) {
   // your code here
+  return tracks.slice(0,10);
 }
 
 function extractPopularity(tracks) {
   // your code here
+  return tracks.map(track => track.popularity);
 }
 
 function extractNames(tracks) {
   // your code here
+  return tracks.map(track => track.name);
 }
 
 function chartData(labels, inputData) {
   // your code here
 
   // use the dataSetProperties variable defined above if it helps
+  
+  dataSetProperties.data = inputData  
+  var data = {
+    labels: labels,
+    datasets: [
+     // inputData
+      dataSetProperties
+    ]
+  };
+
+  return data;
 }
 
 function getSpotifyTracks(callback){
@@ -39,6 +53,14 @@ function getSpotifyTracks(callback){
   // parameter the data it received
 
   // use the url variable defined above if it helps
+
+  $.ajax({
+    url: url,
+//    dataType: 'jsonp',
+    success: function(response){
+      callback(response.tracks);
+    }
+  });
 }
 
 function success(parsedJSON) {
@@ -52,4 +74,46 @@ function success(parsedJSON) {
   //  5. make a variable `ctx` and select the canvas with the id of spotify-chart
   //     * also make sure to specify 2d context
   //  6. make a new bar chart!
+  var options = {
+    //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
+    scaleBeginAtZero : true,
+
+    //Boolean - Whether grid lines are shown across the chart
+    scaleShowGridLines : true,
+
+    //String - Colour of the grid lines
+    scaleGridLineColor : "rgba(0,0,0,.05)",
+
+    //Number - Width of the grid lines
+    scaleGridLineWidth : 1,
+
+    //Boolean - Whether to show horizontal lines (except X axis)
+    scaleShowHorizontalLines: true,
+
+    //Boolean - Whether to show vertical lines (except Y axis)
+    scaleShowVerticalLines: true,
+
+    //Boolean - If there is a stroke on each bar
+    barShowStroke : true,
+
+    //Number - Pixel width of the bar stroke
+    barStrokeWidth : 2,
+
+    //Number - Spacing between each of the X value sets
+    barValueSpacing : 5,
+
+    //Number - Spacing between data sets within X values
+    barDatasetSpacing : 1
+  }
+  var tracks = extractTop10Tracks(parsedJSON),
+      labels = extractNames(tracks),
+      inputData = extractPopularity(tracks),
+      dataSet = chartData(labels,inputData),
+
+      canvas = document.getElementById('spotify-chart'),
+      ctx = canvas.getContext('2d')
+
+      myBarChart = new Chart(ctx).Bar(
+        dataSet, options
+    );
 }
